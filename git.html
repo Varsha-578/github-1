@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Finance Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .balance {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #27ae60;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 10px;
+      margin-top: 10px;
+      border-left: 5px solid;
+      background: #f9f9f9;
+    }
+
+    .income {
+      border-color: #2ecc71;
+      color: #2ecc71;
+    }
+
+    .expense {
+      border-color: #e74c3c;
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Finance Tracker</h2>
+    <div class="balance">Balance: $<span id="balance">0.00</span></div>
+
+    <form id="transaction-form">
+      <input type="text" id="description" placeholder="Description" required />
+      <input type="number" id="amount" placeholder="Amount" step="0.01" required />
+      <select id="type">
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+      <button type="submit">Add Transaction</button>
+    </form>
+
+    <ul id="transaction-list"></ul>
+  </div>
+
+  <script>
+    const form = document.getElementById('transaction-form');
+    const balanceEl = document.getElementById('balance');
+    const list = document.getElementById('transaction-list');
+
+    let balance = 0;
+    let transactions = [];
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const description = document.getElementById('description').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+      const type = document.getElementById('type').value;
+
+      if (!description || isNaN(amount)) return;
+
+      const transaction = {
+        id: Date.now(),
+        description,
+        amount,
+        type
+      };
+
+      transactions.push(transaction);
+      updateTransactions();
+      form.reset();
+    });
+
+    function updateTransactions() {
+      list.innerHTML = '';
+      balance = 0;
+
+      transactions.forEach(tx => {
+        const li = document.createElement('li');
+        li.classList.add(tx.type);
+        li.innerHTML = `${tx.description}: $${tx.amount.toFixed(2)}`;
+
+        list.appendChild(li);
+
+        if (tx.type === 'income') {
+          balance += tx.amount;
+        } else {
+          balance -= tx.amount;
+        }
+      });
+
+      balanceEl.innerText = balance.toFixed(2);
+    }
+  </script>
+</body>
+</html>
